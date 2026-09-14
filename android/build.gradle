@@ -55,13 +55,11 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':capacitor-android')
     implementation project(':bricks-soft-android-tracking-core')
-    // Artifact pins inspected 2026-09-14; source URLs are recorded in README.md.
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2'
     testImplementation 'org.robolectric:robolectric:4.16'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2'
     testImplementation "junit:junit:$junitVersion"
-    // androidTest smoke dependencies verified against Google Maven metadata on 2026-09-14.
     androidTestImplementation "androidx.test:runner:$androidxTestRunnerVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test:core:$androidxTestCoreVersion"

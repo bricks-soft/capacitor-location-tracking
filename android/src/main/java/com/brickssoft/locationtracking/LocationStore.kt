@@ -18,10 +18,7 @@ internal interface LocationRepository {
     suspend fun clearAuthorization(scope: String)
     suspend fun sync(scope: String): DrainResult
 }
-/** API verified from sibling core source, 2026-09-14. Published source identity:
- * https://github.com/bricks-soft/android-tracking-core (see README for inspected local artifact).
- * No location table/outbox is duplicated here. QueueRecord pins routing and encoded JSON to revision.
- */
+/** Uses the core queue as the only point store and pins each encoded record to its routing revision. */
 internal class LocationStore(
     context: Context,
     diagnosticSink: Diagnostics = Diagnostics.NONE,

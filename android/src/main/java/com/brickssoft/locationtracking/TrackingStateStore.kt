@@ -17,8 +17,8 @@ internal interface TrackingClock {
 internal class AndroidTrackingClock(private val context: Context) : TrackingClock {
     override fun wall(): Long = System.currentTimeMillis()
     override fun elapsed(): Long = SystemClock.elapsedRealtime()
-    // BOOT_COUNT was added in API 24. API 23 restores conservatively using receiver + elapsed reset.
-    // https://developer.android.com/reference/android/provider/Settings.Global#BOOT_COUNT retrieved 2026-09-14.
+    // BOOT_COUNT is available from API 24. API 23 restores conservatively using receiver + elapsed reset.
+    // https://developer.android.com/reference/android/provider/Settings.Global#BOOT_COUNT
     override fun boot(): Int = if (Build.VERSION.SDK_INT >= 24)
         Settings.Global.getInt(context.contentResolver, Settings.Global.BOOT_COUNT, -1) else -1
 }
@@ -73,12 +73,7 @@ internal interface StatePersistence {
     fun read(): StoredTrackingState
     fun write(state: StoredTrackingState)
 }
-/** One controller in the default process owns writes; points live only in the core queue.
- * AtomicFile syncs before replacement; noBackupFilesDir excludes transfer/backup.
- * https://developer.android.com/reference/android/util/AtomicFile
- * https://developer.android.com/reference/android/content/Context#getNoBackupFilesDir()
- * Retrieved 2026-09-14. See README for cross-store crash ordering.
- */
+/** Persists controller state with AtomicFile under noBackupFilesDir; points remain in the core queue. */
 internal class TrackingStateStore(context: Context) : StatePersistence {
     private val file = AtomicFile(File(context.noBackupFilesDir, "location-tracking-state.json"))
     @Synchronized override fun read(): StoredTrackingState = try {

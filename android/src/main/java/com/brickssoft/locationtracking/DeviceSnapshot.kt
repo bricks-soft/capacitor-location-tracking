@@ -6,7 +6,7 @@ import android.content.IntentFilter
 import android.os.BatteryManager
 import org.json.JSONObject
 
-// Sticky battery snapshot; API fields inspected in SDK 36 android-stubs-src.jar on 2026-09-14.
+// The sticky broadcast provides the current battery snapshot.
 // https://developer.android.com/reference/android/os/BatteryManager
 // https://developer.android.com/reference/android/content/Intent#ACTION_BATTERY_CHANGED
 internal fun deviceBattery(context: Context): JSONObject {
@@ -19,8 +19,7 @@ internal fun deviceBattery(context: Context): JSONObject {
 }
 
 // Active connectivity is an observation, not proof that the configured endpoint is reachable.
-// https://developer.android.com/reference/android/net/ConnectivityManager retrieved 2026-09-14;
-// activeNetwork/getNetworkCapabilities signatures checked against the SDK 36 artifact.
+// https://developer.android.com/reference/android/net/ConnectivityManager
 internal fun networkConnected(context: Context): Boolean {
     val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as android.net.ConnectivityManager
     val network = manager.activeNetwork ?: return false

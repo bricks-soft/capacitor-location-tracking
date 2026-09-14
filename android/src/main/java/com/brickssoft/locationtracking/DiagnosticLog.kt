@@ -8,10 +8,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 
-/** Bounded operational records, never queue payloads or exception/HTTP response text.
- * SQLiteOpenHelper/transactions: https://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper
- * Retrieved 2026-09-14; Android SDK 36 artifact is also compiled locally.
- */
+/** Stores bounded operational records without queue payloads or exception or HTTP response text. */
 internal class DiagnosticLog(context: Context, private val now: () -> Long = System::currentTimeMillis) :
     SQLiteOpenHelper(context, File(context.noBackupFilesDir, "location-tracking-log.db").path, null, 1), java.io.Closeable {
     private var maxBytes = 1048576L

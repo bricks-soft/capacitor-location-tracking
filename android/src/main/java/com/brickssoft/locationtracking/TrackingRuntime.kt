@@ -50,7 +50,6 @@ internal class TrackingRuntime private constructor(val context: Context) {
         // User Stop removes the process without callbacks. Inspect each exit only once.
         // https://developer.android.com/develop/background-work/services/fgs/handle-user-stopping
         // https://developer.android.com/reference/android/app/ActivityManager#getHistoricalProcessExitReasons(java.lang.String,int,int)
-        // Retrieved 2026-09-14; API 30+ signatures checked in SDK 36 artifact.
         if (Build.VERSION.SDK_INT >= 30) {
             val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
             manager.getHistoricalProcessExitReasons(context.packageName, 0, 10)
@@ -113,7 +112,6 @@ internal class AndroidServiceDriver(private val context: Context) : TrackingServ
     override suspend fun restore(generation: Long) { launchService(generation) }
     private fun launchService(generation: Long) {
             val intent = Intent(context, LocationTrackingService::class.java).putExtra("generation", generation)
-            // Verified API and exception contracts, retrieved 2026-09-14:
             // https://developer.android.com/develop/background-work/services/fgs/launch
             // https://developer.android.com/develop/background-work/services/fgs/restrictions-bg-start
             try {

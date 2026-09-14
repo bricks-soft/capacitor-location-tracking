@@ -6,9 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 
-/** Exact access is optional; both alarms wake an explicit receiver, never start a service.
- * https://developer.android.com/develop/background-work/services/alarms retrieved 2026-09-14.
- */
+/** Schedules wall and elapsed deadlines through an explicit receiver without starting a service. */
 internal class DeadlineScheduler(private val context: Context, private val clock: TrackingClock) : DeadlinePlan {
     private val alarms get() = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     private fun pending(code: Int): PendingIntent = PendingIntent.getBroadcast(context, code,

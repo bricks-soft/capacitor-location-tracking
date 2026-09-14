@@ -65,7 +65,7 @@ class LocationTrackingService : Service() {
             addAction(Intent.ACTION_TIME_CHANGED); addAction(Intent.ACTION_TIMEZONE_CHANGED)
             @Suppress("DEPRECATION") addAction(ConnectivityManager.CONNECTIVITY_ACTION)
         }
-        // System-only receiver, platform overload verified against SDK 36 android.jar (2026-09-14).
+        // The receiver listens only for protected system broadcasts.
         if (Build.VERSION.SDK_INT >= 33) registerReceiver(changes, filter, Context.RECEIVER_NOT_EXPORTED)
         else @Suppress("DEPRECATION") registerReceiver(changes, filter)
         registered = true
@@ -212,7 +212,7 @@ class LocationTrackingService : Service() {
         val channel = n.getString("channelId")
         // API 26+ requires a channel; a location FGS uses low importance or above.
         // https://developer.android.com/develop/ui/compose/notifications/channels
-        // https://developer.android.com/develop/background-work/services/fgs/launch retrieved 2026-09-14.
+        // https://developer.android.com/develop/background-work/services/fgs/launch
         if (Build.VERSION.SDK_INT >= 26) manager.createNotificationChannel(NotificationChannel(channel, n.getString("channelName"), NotificationManager.IMPORTANCE_LOW))
         val icon = resources.getIdentifier(n.getString("smallIcon"), "drawable", packageName)
             .takeIf { it != 0 } ?: resources.getIdentifier(n.getString("smallIcon"), "mipmap", packageName)

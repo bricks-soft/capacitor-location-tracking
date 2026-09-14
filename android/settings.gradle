@@ -3,7 +3,7 @@ project(':capacitor-android').projectDir = new File('../node_modules/@capacitor/
 include ':bricks-soft-android-tracking-core'
 project(':bricks-soft-android-tracking-core').projectDir = new File(settingsDir, '../node_modules/@bricks-soft/android-tracking-core/android').canonicalFile
 
-// Standalone dependency builds must not write into the sibling core checkout.
+// Standalone builds keep dependency outputs inside this project.
 gradle.projectsLoaded {
     gradle.rootProject.ext.compileSdkVersion = 36
     gradle.rootProject.subprojects { p ->

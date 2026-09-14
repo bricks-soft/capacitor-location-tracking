@@ -7,11 +7,11 @@ import android.os.Build
 import android.os.UserManager
 import kotlinx.coroutines.launch
 
-/** BOOT_COMPLETED and MY_PACKAGE_REPLACED exempt the general background-start restriction,
- * not location's while-in-use checks. Android 15's boot-prohibited type list excludes location.
+/** Restores eligible tracking after boot or package replacement.
+ * These broadcasts are background-start exemptions but remain subject to location while-in-use checks.
+ * Direct-boot storage and LOCKED_BOOT_COMPLETED are not used.
  * https://developer.android.com/develop/background-work/services/fgs/restrictions-bg-start
  * https://developer.android.com/about/versions/15/behavior-changes-15#fgs-boot-completed
- * Retrieved 2026-09-14. No direct-boot storage or LOCKED_BOOT_COMPLETED subscription.
  */
 class TrackingRestoreReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {

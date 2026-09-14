@@ -19,11 +19,7 @@ import com.brickssoft.tracking.location.PositionRequest
 import kotlinx.coroutines.*
 import org.json.JSONObject
 
-/** Bridge signatures verified in installed @capacitor/android 7.6.9 artifact, 2026-09-14:
- * https://registry.npmjs.org/@capacitor/android/-/android-7.6.9.tgz
- * Permission flow: https://developer.android.com/develop/sensors-and-location/location/permissions/background
- * Retrieved 2026-09-14. Foreground and background are separate host-initiated calls.
- */
+/** Capacitor bridge for native tracking; foreground and background permission requests are separate host actions. */
 @CapacitorPlugin(name = "LocationTracking", permissions = [
     Permission(alias = "location", strings = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION]),
     Permission(alias = "background", strings = [Manifest.permission.ACCESS_BACKGROUND_LOCATION]),
