@@ -97,10 +97,11 @@ class EmulatorSmokeTest {
                 Log.i(TAG, "queueCount=$queueCount uploadState=$uploadState")
 
                 lastDiagnosticId = logDiagnostics(runtime, lastDiagnosticId, observedReasons)
-                if (persistedLocations >= 2) {
+                // Short smoke runs stop at two fixes; soak runs (runMinutes > 3) run for the full window.
+                if (persistedLocations >= 2 && runMinutes <= 3) {
                     break
                 }
-                SystemClock.sleep(3_000L)
+                SystemClock.sleep(if (runMinutes > 3) 30_000L else 3_000L)
             }
 
             val syncOutcome = try {
