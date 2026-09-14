@@ -108,6 +108,10 @@ ANDROID_HOME=/home/salem/Android/Sdk \
 GRADLE_USER_HOME=/tmp/workerG-gradle \
 ./gradlew connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.smoke=true -Pandroid.testInstrumentationRunnerArguments.provider=hms
 
+# Soak variant (2 h at the production 60 s cadence): add
+#   -Pandroid.testInstrumentationRunnerArguments.intervalMs=60000 -Pandroid.testInstrumentationRunnerArguments.runMinutes=120
+# and feed a fix every 60 s.
+
 # 5) while running, feed the emulator location fixes
 adb emu geo fix <lon> <lat>
 

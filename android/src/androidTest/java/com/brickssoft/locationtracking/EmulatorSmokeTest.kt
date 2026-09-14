@@ -44,8 +44,11 @@ class EmulatorSmokeTest {
 
         val requestedProvider = normalizeProvider(args.getString("provider") ?: DEFAULT_PROVIDER)
         val endpoint = normalizeEndpoint(args.getString("url") ?: DEFAULT_URL)
+        // Soak knobs: sampling interval and run length (defaults reproduce the 3-minute smoke run).
+        val intervalMs = (args.getString("intervalMs") ?: "15000").toLong()
+        val runMinutes = (args.getString("runMinutes") ?: "3").toLong()
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val stopAtEpochMs = System.currentTimeMillis() + 30L * 60L * 1000L
+        val stopAtEpochMs = System.currentTimeMillis() + (runMinutes + 30L) * 60L * 1000L
 
         grantPermissionViaUiAutomation(context)
         assertPermissionsEnabled(context)
@@ -74,6 +77,7 @@ class EmulatorSmokeTest {
                 provider = requestedProvider,
                 sessionId = UUID.randomUUID().toString(),
                 stopAtEpochMs = stopAtEpochMs,
+                intervalMs = intervalMs,
             )
             runtime.logs.configure(config.diagnostics)
             runtime.logs.clear()
@@ -82,7 +86,7 @@ class EmulatorSmokeTest {
             runtime.controller.ready(config)
             runtime.controller.start()
 
-            val deadlineMs = SystemClock.elapsedRealtime() + 180_000L
+            val deadlineMs = SystemClock.elapsedRealtime() + runMinutes * 60_000L
             while (SystemClock.elapsedRealtime() < deadlineMs) {
                 val state = runtime.state()
                 val providerState = TrackingController.providerJson(runtime.controller.providerState())
@@ -162,7 +166,8 @@ class EmulatorSmokeTest {
         endpoint: String,
         provider: String,
         sessionId: String,
-        stopAtEpochMs: Long
+        stopAtEpochMs: Long,
+        intervalMs: Long = 15_000,
     ): TrackingConfig {
         val template = JSONObject()
             .put("uuid", JSONObject().put("\$field", "uuid"))
@@ -191,8 +196,8 @@ class EmulatorSmokeTest {
                 .put("sessionId", sessionId)
                 .put("provider", provider)
                 .put("allowPlatformFallback", false)
-                .put("intervalMs", 15_000)
-                .put("minUpdateIntervalMs", 15_000)
+                .put("intervalMs", intervalMs)
+                .put("minUpdateIntervalMs", intervalMs)
                 .put("heartbeatIntervalSeconds", 30)
                 .put("accuracy", "high")
                 .put("stopAtEpochMs", stopAtEpochMs)
