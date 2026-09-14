@@ -98,6 +98,7 @@ internal class TrackingRuntime private constructor(val context: Context) {
 }
 
 internal class AndroidServiceDriver(private val context: Context) : TrackingServiceDriver {
+    private companion object { const val START_TIMEOUT_MS = 90_000L } // > service readiness window
     @Volatile var active: LocationTrackingService? = null
     private val lock = Any()
     private var pending: Pair<Long, CompletableDeferred<Unit>>? = null
@@ -106,7 +107,7 @@ internal class AndroidServiceDriver(private val context: Context) : TrackingServ
         synchronized(lock) { pending?.second?.cancel(); pending = generation to completion }
         try {
             launchService(generation)
-            withTimeout(20000) { completion.await() }
+            withTimeout(START_TIMEOUT_MS) { completion.await() }
         } finally { synchronized(lock) { if (pending?.first == generation) pending = null } }
     }
     override suspend fun restore(generation: Long) { launchService(generation) }

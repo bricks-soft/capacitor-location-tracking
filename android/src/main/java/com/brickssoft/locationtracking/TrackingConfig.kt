@@ -91,7 +91,8 @@ internal class TrackingConfig private constructor(val json: String) {
             authRequired = h.getBoolean("authRequired"), autoSync = h.getBoolean("autoSync"),
             autoSyncThreshold = h.getInt("autoSyncThreshold"), maxBatchSize = if (h.getBoolean("batchSync")) h.getInt("maxBatchSize") else 1,
             maxBatchAgeSeconds = h.getLong("maxBatchAgeSeconds"), timeoutMillis = h.getLong("timeoutSeconds") * 1000,
-            retention = RetentionPolicy(r.getInt("maxDaysToPersist"), r.getInt("maxRecordsToPersist")))
+            retention = RetentionPolicy(r.getInt("maxDaysToPersist"), r.getInt("maxRecordsToPersist")),
+            allowCleartext = h.optBoolean("allowCleartext", false))
     }
     companion object {
         fun parse(o: JSONObject): TrackingConfig {
@@ -127,9 +128,13 @@ internal class TrackingConfig private constructor(val json: String) {
         }
         private fun validateHttp(h: JSONObject) {
             Arguments.keys(h, setOf("url", "method", "rootProperty", "headers", "params", "template", "authRequired", "autoSync",
-                "batchSync", "autoSyncThreshold", "maxBatchSize", "maxBatchAgeSeconds", "timeoutSeconds"))
+                "batchSync", "autoSyncThreshold", "maxBatchSize", "maxBatchAgeSeconds", "timeoutSeconds", "allowCleartext"))
             val url = URI(Arguments.text(h, "url", 8192))
-            require(url.scheme == "https" && !url.host.isNullOrBlank() && url.rawUserInfo == null && url.rawFragment == null) { "HTTPS destination required" }
+            // allowCleartext is an explicit host opt-in for test endpoints only; the host app must also permit
+            // cleartext traffic in its network security config for the request to be sent.
+            val allowCleartext = h.has("allowCleartext") && Arguments.bool(h, "allowCleartext")
+            val schemeOk = url.scheme == "https" || (url.scheme == "http" && allowCleartext)
+            require(schemeOk && !url.host.isNullOrBlank() && url.rawUserInfo == null && url.rawFragment == null) { "HTTPS destination required" }
             require(Arguments.text(h, "method") in setOf("POST", "PUT", "PATCH"))
             val root = Arguments.text(h, "rootProperty")
             require(!h.getJSONObject("params").has(root)) { "params cannot overwrite rootProperty" }

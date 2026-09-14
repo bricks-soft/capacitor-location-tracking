@@ -2,6 +2,10 @@ ext {
     kotlinVersion = project.hasProperty('kotlin_version') ? rootProject.ext.kotlin_version : '2.2.0'
     junitVersion = project.hasProperty('junitVersion') ? rootProject.ext.junitVersion : '4.13.2'
     androidxJunitVersion = project.hasProperty('androidxJunitVersion') ? rootProject.ext.androidxJunitVersion : '1.3.0'
+    androidxTestCoreVersion = project.hasProperty('androidxTestCoreVersion') ? rootProject.ext.androidxTestCoreVersion : '1.7.0'
+    androidxTestRunnerVersion = project.hasProperty('androidxTestRunnerVersion') ? rootProject.ext.androidxTestRunnerVersion : '1.7.0'
+    androidxTestRulesVersion = project.hasProperty('androidxTestRulesVersion') ? rootProject.ext.androidxTestRulesVersion : '1.7.0'
+    espressoCoreVersion = project.hasProperty('espressoCoreVersion') ? rootProject.ext.espressoCoreVersion : '3.7.0'
 }
 
 buildscript {
@@ -57,7 +61,12 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:4.16'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2'
     testImplementation "junit:junit:$junitVersion"
+    // androidTest smoke dependencies verified against Google Maven metadata on 2026-09-14.
+    androidTestImplementation "androidx.test:runner:$androidxTestRunnerVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test:core:$androidxTestCoreVersion"
+    androidTestImplementation "androidx.test:rules:$androidxTestRulesVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoCoreVersion"
 }
 
 tasks.withType(Test).configureEach {

@@ -22,6 +22,11 @@ import kotlinx.coroutines.sync.withLock
 import org.json.JSONObject
 
 class LocationTrackingService : Service() {
+    private companion object {
+        // Provider registration can lag on slow devices and Huawei gives no ordering guarantee between
+        // registration success and the first fix; the first delivered fix also completes readiness.
+        const val SUBSCRIPTION_READY_TIMEOUT_MS = 60_000L
+    }
     private lateinit var runtime: TrackingRuntime
     private val jobs = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val lifecycle = Mutex()
@@ -122,7 +127,7 @@ class LocationTrackingService : Service() {
                         jobs.launch { if (generation == runtime.controller.stored.generation) fail("PROVIDER_ERROR") }
                     }
                 })
-                withTimeout(15000) { subscription!!.awaitReady() }
+                withTimeout(SUBSCRIPTION_READY_TIMEOUT_MS) { subscription!!.awaitReady() }
             }
             runtime.controller.serviceReady(gen)
             runtime.driver.complete(gen)

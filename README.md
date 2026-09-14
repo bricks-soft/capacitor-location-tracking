@@ -83,6 +83,47 @@ The web check builds strict TypeScript, updates this README/docgen JSON, builds 
 
 No emulator is usable on this host. Real GMS/HMS fixes, eight-hour screen-off behavior, OEM kills, update/reboot, foreground/background settings UX, process death, Android Keystore, non-preloaded-HMS background mode, final host Capacitor upgrade, minified R8 reconstruction and final APK/AAB 16 KB behavior still require host/device qualification. This library AAR build is not that evidence.
 
+## Emulator smoke test
+
+The smoke path is built as an Android instrumentation test that must be opt-in.
+
+Commands (on host, from this repository):
+
+```sh
+cd /home/salem/coding/bricks-soft/capacitor-location-tracking
+
+# 1) start test HTTP endpoint
+cd scripts && ./fake-upload-server.py --mode ok
+
+# 2) optional note: if the emulator cannot route 10.0.2.2, use adb reverse; otherwise keep the default URL note in mind
+# adb reverse tcp:8787 tcp:8787
+
+# 3) install HMS Core in the API 34 x86_64 emulator when required by scenario
+adb install path/to/HMSCore.apk
+
+# 4) run the smoke test (opt-in with smoke=true)
+cd ../android
+JAVA_HOME=/home/salem/.jdks/jdk-21.0.12.1+1 \
+ANDROID_HOME=/home/salem/Android/Sdk \
+GRADLE_USER_HOME=/tmp/workerG-gradle \
+./gradlew connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.smoke=true -Pandroid.testInstrumentationRunnerArguments.provider=hms
+
+# 5) while running, feed the emulator location fixes
+adb emu geo fix <lon> <lat>
+
+# 6) inspect SMOKE-tagged logs from the test run
+adb logcat -s SMOKE
+```
+
+If you pass a custom URL to the test, use:
+
+```sh
+cd android
+./gradlew connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.smoke=true -Pandroid.testInstrumentationRunnerArguments.url=http://10.0.2.2:8787/locations
+```
+
+Note: `TrackingConfig.parse` requires HTTPS URLs in this checkout, so the test normalizes HTTP arguments to HTTPS before runtime config parsing.
+
 Verified locally on **2026-09-14**: **40 plugin tests + 64 core tests per variant** (debug and release), zero failures/errors/skips. The final `test assembleRelease` invocation returned `BUILD SUCCESSFUL in 45s` (200 tasks). The release AAR is `android/build/outputs/aar/android-release.aar`. `npm run test:web` passed the full build and 19 rejection checks; the npm package-content check also passed. Full file inventory and exact commands are in `IMPLEMENTATION_REPORT.md`.
 
 ## Technical evidence

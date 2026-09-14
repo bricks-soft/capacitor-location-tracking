@@ -36,6 +36,8 @@ export interface TrackingConfig extends Scope {
     maxBatchSize: number;
     maxBatchAgeSeconds: number; // flush small tails while active
     timeoutSeconds: number;
+    /** Explicit opt-in for http:// upload URLs (test endpoints only). Default false. */
+    allowCleartext?: boolean;
   };
   retention: { maxDaysToPersist: number; maxRecordsToPersist: number };
   notification: {
