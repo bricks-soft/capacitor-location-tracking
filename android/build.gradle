@@ -37,7 +37,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-    kotlinOptions { jvmTarget = "17" }
+    kotlinOptions { jvmTarget = "17"; allWarningsAsErrors = true }
     testOptions { unitTests.includeAndroidResources = true }
 }
 
@@ -51,6 +51,16 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':capacitor-android')
     implementation project(':bricks-soft-android-tracking-core')
+    // Artifact pins inspected 2026-09-14; source URLs are recorded in README.md.
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2'
+    testImplementation 'org.robolectric:robolectric:4.16'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2'
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+}
+
+tasks.withType(Test).configureEach {
+    systemProperty 'robolectric.dependency.repo.url', 'https://repo.maven.apache.org/maven2'
+    maxParallelForks = 1
 }

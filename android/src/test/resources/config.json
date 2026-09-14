@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "scopeKey": "test-identity",
+  "sessionId": "test-session",
+  "provider": "platform",
+  "allowPlatformFallback": false,
+  "intervalMs": 60000,
+  "minUpdateIntervalMs": 60000,
+  "heartbeatIntervalSeconds": 120,
+  "accuracy": "high",
+  "stopAtEpochMs": 200000,
+  "startOnBoot": true,
+  "stopOnTerminate": false,
+  "http": {
+    "url": "https://example.invalid/points",
+    "method": "POST",
+    "rootProperty": "records",
+    "headers": {},
+    "params": {"context": {"schema": 1}},
+    "template": {"id": {"$field": "uuid"}, "at": {"$field": "timestamp"}, "coordinates": {"$field": "coords"}},
+    "authRequired": false,
+    "autoSync": true,
+    "batchSync": true,
+    "autoSyncThreshold": 2,
+    "maxBatchSize": 50,
+    "maxBatchAgeSeconds": 0,
+    "timeoutSeconds": 60
+  },
+  "retention": {"maxDaysToPersist": 1, "maxRecordsToPersist": -1},
+  "notification": {"id": 1001, "channelId": "tracking", "channelName": "Tracking", "title": "Tracking", "text": "Tracking is active", "smallIcon": "ic_tracking"},
+  "diagnostics": {"level": "debug", "maxBytes": 1048576, "maxDays": 3}
+}
